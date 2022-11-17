@@ -2,30 +2,35 @@
 
 class Tag {
     public $name;
-    public $attr = [];
-    public $child = [];
+    public $attrs = [];
+    public $children = [];
+    public $content = '';
     
     public function __construct(string $name){
         $this -> name = $name;
     }    
     public function attr($name, $value){
-        $this->attr[$name] = $value;
+        $this->attrs[$name] = $value;
     }
     public function attrArray($arr =[]){
-        $this->attr = array_merge($this->attr, $arr );
+        $this->attrs = array_merge($this->attrs, $arr );
     }
     public function appendChild($element) {
-        $this->child[] = $element;
+        $this->children[] = $element;
+    }
+    public function addContent($text) {
+        $this->content .= $text;
     }
 
-    public function render($content=''){
-
+    public function render(){
+        $childStr = '';
         $attrStr = '';
-        foreach($this->attr as $key => $value) {
+        foreach($this->attrs as $key => $value) {
             $attrStr .="$key=\"$value\" ";
 
         }
-        $elem = "<$this->name $attrStr>$content</$this->name>";
+
+        $elem = "<{$this->name} $attrStr> {$this->content} </{$this->name}>";
         return $elem;
     }
 
@@ -40,49 +45,32 @@ class SingleTag extends Tag {
     private $singleTags = ['area','base','basefont','bgsound','col','command','embed','hr','img','input','isindex','keygen','link','meta','param','source','track','wbr'];
 }
 
-$a = new Tag("a");
-$a->attr('class', 'button');
-$a->attr('value', 'go to Yandex');
-$a->attr('href', 'http://yandex.ru');
-$a->attr('data-class', 'delete-btn');
+// $a = new Tag("a");
+// $a->attr('class', 'button');
+// $a->attr('value', 'go to Yandex');
+// $a->attr('href', 'http://yandex.ru');
+// $a->attr('data-class', 'delete-btn');
 
-$html = new Tag('html');
+$content = new Tag('html');
 $header = new Tag("div");
-$body = new Tag('div');
+
+$main = new Tag('div');
 $footer = new Tag("div");
 
 
 $header -> attrArray(['class'=> 'header', 'id'=>'header_one']);
-$body -> attrArray(['class'=> 'container', 'id'=>'container_one']);
+$main -> attrArray(['class'=> 'container', 'id'=>'container_one']);
 $footer -> attrArray(['class'=> 'footer', 'id'=>'footer_one']);
 
-$html->appendChild($header);
-$html->appendChild($body);
-$html->appendChild($footer);
+$header -> addContent('<h1>HEADER</h1>');
+$main -> addContent('<button>body button</button>');
+$footer -> addContent('<h1>FOOTER</h1>');
 
-echo '<pre>';
-var_dump($header);
-echo '</pre>';
-echo '<hr>';
-echo '<pre>';
-var_dump($body);
-echo '</pre>';
-echo '<hr>';
+$content->appendChild($header);
+$content->appendChild($main);
+$content->appendChild($footer);
 
-echo '<pre>';
-var_dump($footer);
-echo '</pre>';
-echo '<hr>';
+echo $header->render();
+echo $main->render();
+echo $footer->render();
 
-
-echo '<pre>';
-var_dump($html);
-echo '</pre>';
-
-echo $a->render('hello  world');
-
-// echo '<pre>';
-// print_r($b);
-// echo '</pre>';
-
-// echo $b->render();

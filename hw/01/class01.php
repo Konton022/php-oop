@@ -1,11 +1,17 @@
 <?php
 
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    
+    echo '<pre>';
+        print_r($_POST);
+    echo '</pre>';
+
+}
+
 class Tag {
     public $name;
     public $attrs = [];
-    public $children = [];
-    public $content = '';
-    
+
     public function __construct(string $name){
         $this -> name = $name;
     }    
@@ -15,62 +21,76 @@ class Tag {
     public function attrArray($arr =[]){
         $this->attrs = array_merge($this->attrs, $arr );
     }
-    public function appendChild($element) {
-        $this->children[] = $element;
-    }
-    public function addContent($text) {
-        $this->content .= $text;
-    }
 
     public function render(){
-        $childStr = '';
+        return '';
+    }
+    public function generateAttrStr() {
         $attrStr = '';
         foreach($this->attrs as $key => $value) {
             $attrStr .="$key=\"$value\" ";
-
         }
-
-        $elem = "<{$this->name} $attrStr> {$this->content} </{$this->name}>";
-        return $elem;
+        return $attrStr;
     }
 
 }
 
 class PairTag extends Tag {
-
-
+    public $children = [];
+    public function appendChild(Tag $element) {
+        $this->children[] = $element;
+    }
+    public function render(){
+        $childStr = '';
+        $attrStr = $this->generateAttrStr();
+        $content = '';
+        if (isset($this->children)) {
+            foreach($this->children as $child){
+                // var_dump($child);
+                $content .= $child->render();
+            }
+        } 
+        // var_dump('content: '.$content);   
+        $elem = "<{$this->name} $attrStr> {$content} </{$this->name}>";
+        return $elem;
+    }
 }
 
 class SingleTag extends Tag {
-    private $singleTags = ['area','base','basefont','bgsound','col','command','embed','hr','img','input','isindex','keygen','link','meta','param','source','track','wbr'];
+    public function render(){
+        $childStr = '';
+        $attrStr = $this->generateAttrStr();
+        $content = 'child';
+        return "<{$this->name} $attrStr>";
+    }
 }
 
-// $a = new Tag("a");
-// $a->attr('class', 'button');
-// $a->attr('value', 'go to Yandex');
-// $a->attr('href', 'http://yandex.ru');
-// $a->attr('data-class', 'delete-btn');
+$inputName = new SingleTag('input');
+$inputPass = new SingleTag('input');
+$inputSubmit = new SingleTag('input');
+$form = new PairTag('form');
 
-$content = new Tag('html');
-$header = new Tag("div");
-
-$main = new Tag('div');
-$footer = new Tag("div");
+$inputName -> attrArray(['name'=>'user', 'type'=>'text', 'placeholder'=>'username']);
+$inputPass -> attrArray(['name'=>'password', 'type'=>'password', 'placeholder'=>'userpassword']);
+$inputSubmit -> attrArray(['type'=>'submit', 'value'=>'send']);
+$form -> attr('method', 'POST');
 
 
-$header -> attrArray(['class'=> 'header', 'id'=>'header_one']);
-$main -> attrArray(['class'=> 'container', 'id'=>'container_one']);
-$footer -> attrArray(['class'=> 'footer', 'id'=>'footer_one']);
+$form->appendChild($inputName);
+$form->appendChild($inputPass);
+$form->appendChild($inputSubmit);
 
-$header -> addContent('<h1>HEADER</h1>');
-$main -> addContent('<button>body button</button>');
-$footer -> addContent('<h1>FOOTER</h1>');
 
-$content->appendChild($header);
-$content->appendChild($main);
-$content->appendChild($footer);
+// echo '<pre>';
+// var_dump($form);
+// echo '</pre>';
 
-echo $header->render();
-echo $main->render();
-echo $footer->render();
+echo $form->render();
+
+
+
+
+
+
+
 

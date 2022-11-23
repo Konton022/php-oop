@@ -8,7 +8,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 
-class Tag {
+abstract class Node {
+    abstract public function render();
+}
+
+abstract class Tag extends Node {
     public $name;
     public $attrs = [];
 
@@ -17,14 +21,13 @@ class Tag {
     }    
     public function attr($name, $value){
         $this->attrs[$name] = $value;
+        return $this;
     }
     public function attrArray($arr =[]){
         $this->attrs = array_merge($this->attrs, $arr );
     }
 
-    public function render(){
-        return '';
-    }
+    
     public function generateAttrStr() {
         $attrStr = '';
         foreach($this->attrs as $key => $value) {
@@ -35,10 +38,21 @@ class Tag {
 
 }
 
+class TextNode extends Node {
+    public $text;
+    public function __construct( string $text) {
+        $this->text = $text;
+    }
+    public function render(){
+        return $this->text;
+    }
+}
+
 class PairTag extends Tag {
     public $children = [];
-    public function appendChild(Tag $element) {
+    public function appendChild(Node $element) {
         $this->children[] = $element;
+        return $this;
     }
     public function render(){
         $childStr = '';
@@ -65,21 +79,22 @@ class SingleTag extends Tag {
     }
 }
 
+$helloText = new TextNode('hello world');
+
 $inputName = new SingleTag('input');
 $inputPass = new SingleTag('input');
 $inputSubmit = new SingleTag('input');
 $form = new PairTag('form');
+$alink = new PairTag('a');
+$alink->attr('href', 'https://ya.ru')->appendChild($helloText);
 
-$inputName -> attrArray(['name'=>'user', 'type'=>'text', 'placeholder'=>'username']);
-$inputPass -> attrArray(['name'=>'password', 'type'=>'password', 'placeholder'=>'userpassword']);
+$inputName -> attr('name', 'user') -> attr('type', 'text') -> attr('placeholder', 'username');
+$inputPass -> attrArray(['name'=>'password', 'type'=>'password', 'placeholder'=>'password']);
 $inputSubmit -> attrArray(['type'=>'submit', 'value'=>'send']);
 $form -> attr('method', 'POST');
 
 
-$form->appendChild($inputName);
-$form->appendChild($inputPass);
-$form->appendChild($inputSubmit);
-
+$form->appendChild($inputName)->appendChild($inputPass)->appendChild($inputSubmit)->appendChild($alink);
 
 // echo '<pre>';
 // var_dump($form);

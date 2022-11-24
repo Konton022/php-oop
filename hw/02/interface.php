@@ -2,23 +2,24 @@
 
 interface IStorage
 {
-	public function add(string $key, mixed $data): void;
+	public function add(string $key, mixed $data): self;
 	public function remove(string $key): void;
 	public function contains(string $key): bool;
 	public function get(string $key): mixed;
 }
 
-interface Iserializable
-{
-	public function jsonSerialize(): mixed;
-}
+// interface Iserializable
+// {
+// 	public function jsonSerialize(): mixed;
+// }
 
-class Storage implements IStorage, Iserializable
+class Storage implements IStorage, JsonSerializable
 {
-	public $store = [];
-	public function add(string $key, mixed $data): void
+	public array $store = [];
+	public function add(string $key, mixed $data): self
 	{
 		$this->store[$key] = $data;
+		return $this;
 	}
 	public function remove(string $key): void
 	{
@@ -38,28 +39,34 @@ class Storage implements IStorage, Iserializable
 	}
 }
 
-class JSONLogger
+class JSONLogger 
 {
-	protected array $objects = [];
+	public array $objects = [];
 
-	public function addObject($obj): void
+	public function addObject(JsonSerializable $obj): void
 	{
 		$this->objects[] = $obj;
 	}
 
 	public function log(string $betweenLogs = ','): string
 	{
-		$logs = array_map(function ($obj) {
+		$logs = array_map(function (JsonSerializable $obj) {
 			return $obj->jsonSerialize();
 		}, $this->objects);
 
+		// return $logs;
 		return implode($betweenLogs, $logs);
 	}
 }
 
-$mainStore = (new Storage())->add('item', 'ssd');
+$mainStore = (new Storage())->add('user', 'kos')->add('pass', '123456')->add('email', 'kos@ton');
 $secondStore = (new Storage())->add('item', 'hdd');
 $reservStore = (new Storage())->add('item', 'flash');
+
+// echo '<pre>';
+// var_dump($mainStore);
+// echo '</pre>';
+
 
 $logger = new JSONLogger();
 $logger->addObject($mainStore);
@@ -68,5 +75,5 @@ $logger->addObject($reservStore);
 
 
 echo '<pre>';
-echo json_encode($logger->log());
+print_r (json_encode($logger->log()));
 echo '</pre>';

@@ -2,7 +2,7 @@
 
 interface IStorage
 {
-	public function add(string $key, mixed $data): self;
+	public function add(string $key, mixed $data): void;
 	public function remove(string $key): void;
 	public function contains(string $key): bool;
 	public function get(string $key): mixed;
@@ -16,14 +16,15 @@ interface IStorage
 class Storage implements IStorage, JsonSerializable
 {
 	public array $store = [];
-	public function add(string $key, mixed $data): self
+	public function add(string $key, mixed $data): void
 	{
 		$this->store[$key] = $data;
-		return $this;
 	}
 	public function remove(string $key): void
 	{
-		unset($this->store[$key]);
+		if ($this->contains($key)) {
+			unset($this->store[$key]);
+		}
 	}
 	public function contains(string $key): bool
 	{
@@ -31,7 +32,7 @@ class Storage implements IStorage, JsonSerializable
 	}
 	public function get(string $key): mixed
 	{
-		return $this->store[$key] ?? -1;
+		return $this->contains($key) ? $this->store[$key] : null;
 	}
 	public function jsonSerialize(): mixed
 	{
@@ -39,7 +40,7 @@ class Storage implements IStorage, JsonSerializable
 	}
 }
 
-class JSONLogger 
+class JSONLogger
 {
 	public array $objects = [];
 
@@ -51,17 +52,18 @@ class JSONLogger
 	public function log(string $betweenLogs = ','): string
 	{
 		$logs = array_map(function (JsonSerializable $obj) {
-			return $obj->jsonSerialize();
+			return json_encode($obj->jsonSerialize(), JSON_PRETTY_PRINT | JSON_OBJECT_AS_ARRAY | JSON_UNESCAPED_SLASHES);
 		}, $this->objects);
-
-		// return $logs;
 		return implode($betweenLogs, $logs);
 	}
 }
 
-$mainStore = (new Storage())->add('user', 'kos')->add('pass', '123456')->add('email', 'kos@ton');
-$secondStore = (new Storage())->add('item', 'hdd');
-$reservStore = (new Storage())->add('item', 'flash');
+$mainStore = new Storage();
+$mainStore->add('user', 'kos');
+$secondStore = new Storage();
+$secondStore->add('item', 'hdd');
+$reservStore = new Storage();
+$reservStore->add('item', 'flash');
 
 // echo '<pre>';
 // var_dump($mainStore);
@@ -75,5 +77,5 @@ $logger->addObject($reservStore);
 
 
 echo '<pre>';
-print_r (json_encode($logger->log()));
+echo json_encode($logger->log());
 echo '</pre>';

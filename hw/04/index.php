@@ -1,7 +1,8 @@
 <?php
 include_once 'Shop.php';
 
-use Category\{Shop};
+use Base\Category\{Shop};
+use Base\User\{User};
 
 trait Email
 {
@@ -31,7 +32,7 @@ $carshop1 = new Car('lider', 'lider@lider', 1, 'auto', 'moscow');
 echo '<pre>';
 var_dump($carshop1);
 echo '</pre>';
-$carshop1->email = 'lada@lada';
+// $carshop1->email = 'lada@lada';
 
 echo $carshop1->getName() . '<br>';
 echo $carshop1->getEmail() . '<br>';
@@ -45,7 +46,7 @@ echo $carshop1->getEmail() . '<br>';
 
 // class ShoppingCard{
 //     private static string $name;
-    
+
 //     static function setName($value){
 //         self::$name = $value;
 //     }
@@ -57,3 +58,11 @@ echo $carshop1->getEmail() . '<br>';
 
 // ShoppingCard::setName('Koston');
 // echo ShoppingCard::getName();
+
+$admin = new User('koston', 'koston022@mail', 'admin');
+
+echo '<pre>';
+var_dump($admin);
+echo '</pre>';
+
+echo $admin->getInfo();

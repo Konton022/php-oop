@@ -1,32 +1,21 @@
 <?php
+include_once 'Shop.php';
 
-class Shop {
-    public string $name;
-    private string $email;
-    public int $id;
-    
-    public function __construct($name, $email, $id){
-        $this->name = $name;
-        $this->email = $email;
-        $this->id = $id;
-    }
-    
-    public function getName(){
-        return $this->name;
-    }
-    // public function getEmail(){
-    //     return $this->email;
-    // }
-}
-trait Email {
-    function getEmail(){
+use Category\{Shop};
+
+trait Email
+{
+    function getEmail()
+    {
         return $this->email;
     }
-    function setEmail($email){
+    function setEmail($email)
+    {
         $this->email = $email;
     }
 }
-class Car extends Shop {
+class Car extends Shop
+{
     public $type;
     public $city;
     use Email;
@@ -68,6 +57,3 @@ echo $carshop1->getEmail() . '<br>';
 
 // ShoppingCard::setName('Koston');
 // echo ShoppingCard::getName();
-
-
-

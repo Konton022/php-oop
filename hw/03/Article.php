@@ -1,20 +1,19 @@
 <?php
 
-include_once 'InewStorage.php';
-class Article implements InewStorage
+class Article
 {
-	// public $title;
-	// public $text;
+	public int $id;
+	public string $title;
+	public string $content;
+	protected InewStorage $storage;
 
-	// public function __construct(string $title, string $text)
-	// {
-	// 	$this->title = $title;
-	// 	$this->text = $text;
-	// }
+	public function __construct(InewStorage $storage)
+	{
+		$this->storage = $storage;
+		
+	}
 	public function create(array $fields): int
 	{
-		// $this->title = $fields['title'];
-		// $this->text = $fields['text'];
 		$sql = "INSERT INTO article (title, text) VALUES (:title, :text)";
 		$query = dbQuery($sql, $fields);
 		var_dump($query);

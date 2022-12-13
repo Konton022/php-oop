@@ -2,12 +2,15 @@
 
 include_once('init.php');
 
+use System\Router;
+use Articles\Controller as ArticlesC;
+
 const BASE_URL = '/www/php-oop/hw/04-hw/';
 $router = new Router(BASE_URL);
 
-$router->addRoute('', 'ArticlesController');
-$router->addRoute('article/1', 'ArticlesController', 'item');
-$router->addRoute('article/2', 'ArticlesController', 'item'); // e t.c post/99, post/100 lol :))
+$router->addRoute('', ArticlesC::class);
+$router->addRoute('article/1', ArticlesC::class, 'item');
+$router->addRoute('article/2', ArticlesC::class, 'item'); // e t.c post/99, post/100 lol :))
 
 $uri = $_SERVER['REQUEST_URI'];
 $activeRoute = $router->resolvePath($uri);

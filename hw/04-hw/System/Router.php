@@ -1,16 +1,21 @@
 <?php
 
-class Router{
+namespace System;
+
+class Router
+{
 	protected string $baseUrl;
 	protected int $baseShift;
 	protected array $routes = [];
 
-	public function __construct(string $baseUrl = ''){
+	public function __construct(string $baseUrl = '')
+	{
 		$this->baseUrl = $baseUrl;
 		$this->baseShift = strlen($this->baseUrl);
 	}
 
-	public function addRoute(string $url, string $contorllerName, string $contorllerMethod = 'index'){
+	public function addRoute(string $url, string $contorllerName, string $contorllerMethod = 'index')
+	{
 		$this->routes[] = [
 			'path' => $url,
 			'c' => $contorllerName,
@@ -18,7 +23,8 @@ class Router{
 		];
 	}
 
-	public function resolvePath(string $url) : array{
+	public function resolvePath(string $url): array
+	{
 		$relativeUrl = substr($url, $this->baseShift);
 		$route = $this->findPath($relativeUrl);
 		$params = explode('/', $relativeUrl);
@@ -32,11 +38,12 @@ class Router{
 		];
 	}
 
-	protected function findPath(string $url) : ?array{
+	protected function findPath(string $url): ?array
+	{
 		$activeRoute = null;
 
-		foreach($this->routes as $route){
-			if($url === $route['path']){
+		foreach ($this->routes as $route) {
+			if ($url === $route['path']) {
 				$activeRoute = $route;
 			}
 		}

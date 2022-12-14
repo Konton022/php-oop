@@ -1,6 +1,6 @@
 <?php
 
-namespace System;
+namespace System\Contracts;
 interface IStorage{
 
 	public function create(array $fields) : int;

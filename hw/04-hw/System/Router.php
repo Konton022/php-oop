@@ -1,10 +1,10 @@
 <?php
 
 namespace System;
-
+use System\Contracts\IRouter;
 use System\Exceptions\Exc404;
 
-class Router
+class Router implements IRouter
 {
 	protected string $baseUrl;
 	protected int $baseShift;
@@ -16,7 +16,7 @@ class Router
 		$this->baseShift = strlen($this->baseUrl);
 	}
 
-	public function addRoute(string $url, string $contorllerName, string $contorllerMethod = 'index')
+	public function addRoute(string $url, string $contorllerName, string $contorllerMethod = 'index') : void
 	{
 		$this->routes[] = [
 			'path' => $url,

@@ -1,10 +1,10 @@
 <?php
 
-namespace Articles;
+namespace Modules\Articles\Controllers;
 
-use System\{IController, IStorage, FileStorage};
-
-class Controller implements IController
+use System\Contracts\{IController, IStorage};
+use System\FileStorage;
+class Index implements IController
 {
 	protected string $title = '';
 	protected string $content = '';

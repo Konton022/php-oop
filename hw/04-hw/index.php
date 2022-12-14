@@ -4,7 +4,7 @@ include_once('init.php');
 
 // use Throwable;
 use System\Router;
-use Articles\Controller as ArticlesC;
+use Modules\Articles\Controllers\Index as ArticlesC;
 use System\Exceptions\Exc404;
 
 const BASE_URL = '/www/php-oop/hw/04-hw/';
